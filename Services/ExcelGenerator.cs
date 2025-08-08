@@ -18,17 +18,17 @@ namespace PosDailyMailer.Services
             using var workbook = new XLWorkbook();
 
             // Sheet 1
+            var summaryData = new List<(string Label, object Value)>()
+            {
+                ("Date", date.ToShortDateString()),
+                ("Invoice Count", summary.InvoiceCount),
+                ("Total Gross Sales", summary.TotalAmount),
+                ("Total Tax", summary.TotalTax),
+                ("Total Net Sales", summary.TotalNet)
+            };
+
             var wsSummary = workbook.Worksheets.Add("Total Sales Summary");
-            wsSummary.Cell(1, 1).Value = "Date";
-            wsSummary.Cell(1, 2).Value = date.ToShortDateString();
-            wsSummary.Cell(2, 1).Value = "Invoice Count";
-            wsSummary.Cell(2, 2).Value = summary.InvoiceCount;
-            wsSummary.Cell(3, 1).Value = "Total Gross Sales";
-            wsSummary.Cell(3, 2).Value = summary.TotalAmount;
-            wsSummary.Cell(4, 1).Value = "Total Tax";
-            wsSummary.Cell(4, 2).Value = summary.TotalTax;
-            wsSummary.Cell(5, 1).Value = "Total Net Sales";
-            wsSummary.Cell(5, 2).Value = summary.TotalNet;
+            wsSummary.Cell(1, 1).InsertTable(summaryData, "SummaryTable", true);
 
             // Sheet 2
             var wsHeader = workbook.Worksheets.Add("Header Sales");
