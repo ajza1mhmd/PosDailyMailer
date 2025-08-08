@@ -7,8 +7,8 @@ class Program
     static void Main(string[] args)
     {
         string connectionString = AppConfig.GetConnectionString();
-        //DateTime reportDate = DateTime.Today.AddDays(-1); // Yesterday’s sales
-        DateTime reportDate = new DateTime(2025, 6, 10);
+        DateTime reportDate = DateTime.Today.AddDays(-1); // Yesterday’s sales
+        //DateTime reportDate = new DateTime(2025, 6, 10);
 
         var fetcher = new SalesFetcher(connectionString);
 
