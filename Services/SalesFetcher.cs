@@ -29,23 +29,26 @@ namespace PosDailyMailer.Services
                              FROM gc_invoice_head
                              WHERE DATE(ih_inv_date) = @date";
 
-            using var cmd = new MySqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@date", date);
-
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
+            if (query != null)
             {
-                list.Add(new SalesDataModel
+                using var cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@date", date);
+
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    cm_store = reader.GetInt32("cm_store").ToString(),
-                    ih_inv_no = reader.GetString("ih_inv_no"),
-                    ih_inv_date = reader.GetDateTime("ih_inv_date"),
-                    ih_total_amt = reader.GetDecimal("ih_total_amt"),
-                    ih_tax_amt = reader.GetDecimal("ih_tax_amt"),
-                    ih_net_amt = reader.GetDecimal("ih_net_amt"),
-                    ih_invoiced_on = reader.GetDateTime("ih_invoiced_on"),
-                    ih_invoice_by = reader.GetString("ih_invoice_by")
-                });
+                    list.Add(new SalesDataModel
+                    {
+                        cm_store = reader.GetInt32("cm_store").ToString(),
+                        ih_inv_no = reader.GetString("ih_inv_no"),
+                        ih_inv_date = reader.GetDateTime("ih_inv_date"),
+                        ih_total_amt = reader.GetDecimal("ih_total_amt"),
+                        ih_tax_amt = reader.GetDecimal("ih_tax_amt"),
+                        ih_net_amt = reader.GetDecimal("ih_net_amt"),
+                        ih_invoiced_on = reader.GetDateTime("ih_invoiced_on"),
+                        ih_invoice_by = reader.GetString("ih_invoice_by")
+                    });
+                }
             }
 
             return list;
@@ -67,22 +70,25 @@ namespace PosDailyMailer.Services
                              WHERE  Date(id_created_on) = @date
                              GROUP BY id_item_code, id_barcode, id_name, id_price";
 
-            using var cmd = new MySqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@date", date);
-
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
+            if (query != null)
             {
-                list.Add(new SalesDataDetailModel
+                using var cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@date", date);
+
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    id_item_code = reader["id_item_code"].ToString(),
-                    id_barcode = reader["id_barcode"].ToString(),
-                    id_name = reader["id_name"].ToString(),
-                    id_quantity = reader.GetInt32("total_qty"),
-                    id_price = reader.GetDecimal("id_price"),
-                    id_tax_amt = reader.GetDecimal("total_tax"),
-                    id_net_total = reader.GetDecimal("total_net")
-                });
+                    list.Add(new SalesDataDetailModel
+                    {
+                        id_item_code = reader["id_item_code"].ToString(),
+                        id_barcode = reader["id_barcode"].ToString(),
+                        id_name = reader["id_name"].ToString(),
+                        id_quantity = reader.GetInt32("total_qty"),
+                        id_price = reader.GetDecimal("id_price"),
+                        id_tax_amt = reader.GetDecimal("total_tax"),
+                        id_net_total = reader.GetDecimal("total_net")
+                    });
+                }
             }
 
             return list;
@@ -102,19 +108,20 @@ namespace PosDailyMailer.Services
                              WHERE DATE(ih_inv_date) = @date";
 
             using var cmd = new MySqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@date", date);
+            cmd.Parameters.AddWithValue("@date", date.Date);
 
             using var reader = cmd.ExecuteReader();
-            reader.Read();
+            if (reader.Read())
+            {
+                return (
+                    reader.GetInt32("InvoiceCount"),
+                    reader.GetDecimal("TotalAmount"),
+                    reader.GetDecimal("TotalTax"),
+                    reader.GetDecimal("TotalNet")
+                );
+            }
 
-            return (
-                reader.GetInt32("InvoiceCount"),
-                reader.GetDecimal("TotalAmount"),
-                reader.GetDecimal("TotalTax"),
-                reader.GetDecimal("TotalNet")
-            );
+            return (0, 0m, 0m, 0m);
         }
-
-
     }
 }

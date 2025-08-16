@@ -31,4 +31,16 @@ namespace PosDailyMailer.Config
             return $"Server={DbHost};Database={DbName};User ID={DbUser};Password={DbPassword};";
         }
     }
+    public static class MailerDbConfig
+    {
+        public static string DbHost = "localhost";
+        public static string DbName = "pos_mailer_db";
+        public static string DbUser = "grandChef";
+        public static string DbPassword = "Login@123";
+
+        public static string GetConnectionString()
+        {
+            return $"Server={DbHost};Database={DbName};User ID={DbUser};Password={DbPassword};";
+        }
+    }
 }

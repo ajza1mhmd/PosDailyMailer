@@ -6,15 +6,15 @@ namespace PosDailyMailer.Services
 {
     public class EmailSender
     {
-        public void SendReport(string attachmentFilePath)
+        public void SendReport(string attachmentFilePath, DateTime businessDate)
         {
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("POS Sales Report", AppConfig.SmtpUser));
             message.To.Add(MailboxAddress.Parse(AppConfig.EmailTo));
-            message.Subject = $"Daily Sales Report - {DateTime.Now:yyyy-MM-dd}";
+            message.Subject = $"Daily Sales Report - {businessDate:yyyy-MM-dd}";
 
             var builder = new BodyBuilder();
-            builder.TextBody = "Hello,\n\nPlease find attached the daily sales report.\n\nRegards,\nPOS System";
+            builder.TextBody = $"Hello,\n\nPlease find attached the daily sales report.\n\nRegards,\nPOS System\n\nReport Generated on - {DateTime.Now:yyyy-MM-dd}";
 
             builder.Attachments.Add(attachmentFilePath);
 
